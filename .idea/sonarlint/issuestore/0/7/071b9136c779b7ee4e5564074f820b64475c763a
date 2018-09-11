@@ -1,0 +1,6 @@
+
+Vsquid:S1118":Add a private constructor to hide the implicit public one.(ï÷Ð¢ýÿÿÿÿ
+7squid:S2885" Make "sdf" an instance variable.(µñ‹Ì
+psquid:S1192"YUse already-defined constant 'YYYY_MM_DD_HH_MM_SS' instead of duplicating its value here.(µñ‹Ì
+ysquid:S1488“"\Immediately return this expression instead of assigning it to the temporary variable "days".(ðÞŒÒüÿÿÿÿ
+fsquid:S1192<"PUse already-defined constant 'YYYY_MM_DD' instead of duplicating its value here.(¬ü¯-

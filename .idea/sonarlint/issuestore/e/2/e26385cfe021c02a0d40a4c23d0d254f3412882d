@@ -1,0 +1,7 @@
+
+Tsquid:S11974"8Move the array designator from the variable to the type.(ÔïÏ‚ûÿÿÿÿ
+Qsquid:S1118	":Add a private constructor to hide the implicit public one.(®óžª
+fsquid:S00100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(°Ê»‚
+fsquid:S00100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(†üï÷
+ksquid:S00100&"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÐƒðÒûÿÿÿÿ
+{squid:S11497"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(ú¯õÎúÿÿÿÿ
