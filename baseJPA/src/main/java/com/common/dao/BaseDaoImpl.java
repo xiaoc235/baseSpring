@@ -150,16 +150,21 @@ public abstract class BaseDaoImpl<T>{
         return bigInteger.intValue();
     }
 
+
     /**
      *  查询单个值
      * @param sql
      * @param params
      * @return
      */
-    protected Map<String,Object> getSingleResult(String sql,Map<String, Object> params){
+    protected Map<String,Object> getSingleResultMap(String sql,Map<String, Object> params){
+            return (Map<String, Object>)getSingleResult(sql, params);
+    }
+
+    protected Object getSingleResult(String sql,Map<String, Object> params){
         List<T> list = this.queryList(sql,params);
         if(!list.isEmpty()){
-            return (Map<String, Object>) list.get(0);
+            return list.get(0);
         }
         return null;
     }

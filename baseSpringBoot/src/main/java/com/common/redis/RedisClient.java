@@ -34,10 +34,13 @@ public class RedisClient {
 
     private static StatefulRedisConnection<String, String> connection = null;
     private static io.lettuce.core.RedisClient lettuceRedis = null;
+    private static String APPLICATION_NAME = "";
+
 	private static synchronized void initRedis(){
 		String passwd = redisProperties.getPassword();
 		String host = redisProperties.getHost();
 		String port = redisProperties.getPort();
+        APPLICATION_NAME = redisProperties.getApplicationName();
         if(ObjectUtils.isEmpty(lettuceRedis)){
             RedisURI uri = new RedisURI();
             uri.setHost(host);
@@ -93,9 +96,9 @@ public class RedisClient {
 
 	public void set(String key, String value, int seconds){
         if(seconds > 0) {
-            getAsyncCommand().setex(key, seconds, value);
+            getAsyncCommand().setex(APPLICATION_NAME + key, seconds, value);
         }else{
-            getAsyncCommand().set(key,value);
+            getAsyncCommand().set(APPLICATION_NAME + key,value);
         }
 	}
 
@@ -123,7 +126,7 @@ public class RedisClient {
 	 * @return String
 	 */
 	public String get(String key){
-		return getCommand().get(key);
+		return getCommand().get(APPLICATION_NAME + key);
 	}
 	
 	/**
@@ -137,7 +140,7 @@ public class RedisClient {
 	}
 
 	public Boolean exists(String key){
-		return getCommand().exists(key) > 0;
+		return getCommand().exists(APPLICATION_NAME + key) > 0;
 	}
 
 	/**
@@ -145,8 +148,7 @@ public class RedisClient {
 	 * @author jianghaoming
 	 * @date 2017/1/13  14:33
 	 */
-	public void checkNull(String key) throws BusinessException
-	{
+	public void checkNull(String key) throws BusinessException {
 		if(!exists(key)){
 			throw new BusinessException("未找到相关redis数据，key :" + key);
 		}
@@ -160,21 +162,21 @@ public class RedisClient {
 	 */
 	public int getTtl(String key) throws BusinessException {
 		checkNull(key);
-		return Math.toIntExact(getCommand().ttl(key));
+		return Math.toIntExact(getCommand().ttl(APPLICATION_NAME + key));
 	}
 
     /**
      * 获取key值列表
      */
 	public List<String> getKeys(String pattern){
-        return getCommand().keys(pattern);
+        return getCommand().keys(APPLICATION_NAME + pattern);
     }
 
 	/**
 	 * 删除
 	 */
 	public void delKey(String key){
-		getAsyncCommand().del(key);
+		getAsyncCommand().del(APPLICATION_NAME + key);
 	}
 
 	public void delKeys(String pattern){

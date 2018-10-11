@@ -18,6 +18,15 @@ public class RedisProperties extends BaseDto {
 
     private String port = "6379";
 
+    private String applicationName = "";
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
 
     public String getPassword() {
         return password;

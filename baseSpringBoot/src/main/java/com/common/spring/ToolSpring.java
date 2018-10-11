@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(value = 9)
 public final class ToolSpring implements ApplicationContextAware {
-	private static ApplicationContext applicationContext = null;//声明一个静态变量保存
+	private static ApplicationContext applicationContext = null;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext)

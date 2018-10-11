@@ -1,17 +1,17 @@
 
-]squid:S3027q"FPut single-quotes around ',' to use the faster "indexOf(char)" method.(§±ûÜ
-^squid:S1192o"HDefine a constant instead of duplicating this literal "unknown" 7 times.(ð—þ)
-.squid:S2176"Rename this class.(²Œ›¤øÿÿÿÿ
-Fsquid:S2093&"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ
-gsquid:CommentedOutCodeLinen"<This block of commented-out lines of code should be removed.(ó´µÈüÿÿÿÿ
-bsquid:CommentedOutCodeLinew"<This block of commented-out lines of code should be removed.(è‡£Ù
-gsquid:CommentedOutCodeLine{"<This block of commented-out lines of code should be removed.(÷õÐøÿÿÿÿ
-bsquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(õ²½È
-csquid:CommentedOutCodeLineƒ"<This block of commented-out lines of code should be removed.(‘Ú°–
-csquid:CommentedOutCodeLine‡"<This block of commented-out lines of code should be removed.(Œ˜ôò
-csquid:CommentedOutCodeLine‹"<This block of commented-out lines of code should be removed.(øû«ð
-hsquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(¡ðìüÿÿÿÿ
-nsquid:S3776l"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(ÀãÏ¤ûÿÿÿÿ
-?squid:S11483"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿ
-?squid:S11489"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿ
-Qsquid:S1143<"5Remove this return statement from this finally block.(¥çÇûýÿÿÿÿ
+esquid:S1192o"HDefine a constant instead of duplicating this literal "unknown" 7 times.(ð—þ)8Ê Ðýá,
+isquid:CommentedOutCodeLinew"<This block of commented-out lines of code should be removed.(è‡£Ù8Ê Ðýá,
+Msquid:S2093&"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ8Ê Ðýá,
+Xsquid:S1143<"5Remove this return statement from this finally block.(¥çÇûýÿÿÿÿ8Ê Ðýá,
+jsquid:CommentedOutCodeLine‡"<This block of commented-out lines of code should be removed.(Œ˜ôò8Ê Ðýá,
+jsquid:CommentedOutCodeLine‹"<This block of commented-out lines of code should be removed.(øû«ð8Ê Ðýá,
+dsquid:S3027q"FPut single-quotes around ',' to use the faster "indexOf(char)" method.(§±ûÜ8Ê Ðýá,
+osquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(¡ðìüÿÿÿÿ8Ê Ðýá,
+isquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(õ²½È8Ê Ðýá,
+jsquid:CommentedOutCodeLineƒ"<This block of commented-out lines of code should be removed.(‘Ú°–8Ê Ðýá,
+nsquid:CommentedOutCodeLine{"<This block of commented-out lines of code should be removed.(÷õÐøÿÿÿÿ8Ê Ðýá,
+usquid:S3776l"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(ÀãÏ¤ûÿÿÿÿ8Ê Ðýá,
+5squid:S2176"Rename this class.(²Œ›¤øÿÿÿÿ8Ê Ðýá,
+Fsquid:S11483"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿ8Ê Ðýá,
+Fsquid:S11489"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿ8Ê Ðýá,
+nsquid:CommentedOutCodeLinen"<This block of commented-out lines of code should be removed.(ó´µÈüÿÿÿÿ8Ê Ðýá,

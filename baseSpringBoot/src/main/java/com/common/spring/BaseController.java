@@ -40,30 +40,10 @@ public class BaseController {
 
     private static final Map<String,String> nullMap = new HashMap<>();
 
-    protected boolean isBlank(final String param){
+    protected boolean isBlank(final Object param){
         return CommonUtils.isBlank(param);
     }
 
-    protected int getPageNumber(){
-        int page = 0;
-        String pageStr = getRequestParam("page");
-        if(!isBlank(pageStr)){
-            page = Integer.parseInt(pageStr);
-        }
-        if(page > 30){
-            page = 30;
-        }
-        return page;
-    }
-
-    protected int getPageSize(){
-        int size = 10;
-        String sizeStr = getRequestParam("size");
-        if(!isBlank(sizeStr)){
-            size = Integer.parseInt(sizeStr);
-        }
-        return size;
-    }
 
     /**
      * @Title: 校验参数为空
@@ -71,7 +51,7 @@ public class BaseController {
      * @date 2016/9/21  9:54
      * @param  param 参数，message 提示信息
      */
-    protected void checkParamNull(final String param, final String message) throws BusinessException {
+    protected void checkParamNull(final Object param, final String message) throws BusinessException {
         CheckUtils.checkParamNull(param,message);
     }
 
@@ -96,7 +76,6 @@ public class BaseController {
     }
     protected Integer getRequestParamIntAndCheckNull(final String key) throws BusinessException {
         final String param = getRequestParamAndCheckNull(key);
-
         return Integer.parseInt(param);
     }
 
@@ -240,7 +219,7 @@ public class BaseController {
             return method.call();
         }catch (BusinessException ex) {
             final String message = ex.getErrorDesc();
-            _logger.info(CommConstants.BUSINESS_ERROR + message,ex);
+            _logger.info(CommConstants.BUSINESS_ERROR + " " + message,ex);
             return failResponse(ex.getErrorCode(),message);
         }catch (Exception e) {
             final String message = CommConstants.SYSTEM_ERROR;

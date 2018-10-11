@@ -10,6 +10,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -29,6 +30,8 @@ public class WebLogAspect {
 
     private static final String WRAN_LINE_SIGN = "\r\n";
 
+    private static final String LINE = "--------------------------------------------------------------------------------------------------";
+
     private static final String application_json = "application/json";
 
     /**
@@ -45,7 +48,7 @@ public class WebLogAspect {
 
 
     @Before("webLog()")
-    public void doBefore(JoinPoint joinPoint) throws Throwable {
+    public void doBefore(JoinPoint joinPoint) {
         // 接收到请求，记录请求内容
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
@@ -54,38 +57,40 @@ public class WebLogAspect {
             return;
         }
 
-        StringBuffer requestStr = new StringBuffer("request ==> ");
+        StringBuilder requestStr = new StringBuilder("request ==> ");
         requestStr.append(WRAN_LINE_SIGN);
-        requestStr.append("--------------------------------------------------------------------------------------------------");
+        requestStr.append(LINE);
         requestStr.append(WRAN_LINE_SIGN);
-        requestStr.append("IP : " + CommonUtils.getIpAddr(request));
+        requestStr.append("IP : ").append(CommonUtils.getIpAddr(request));
         requestStr.append(WRAN_LINE_SIGN);
-        requestStr.append("URL : " + request.getRequestURL().toString());
+        requestStr.append("URL : ").append(request.getRequestURL().toString());
         requestStr.append(WRAN_LINE_SIGN);
-        requestStr.append("Method : " + request.getMethod());
+        requestStr.append("Method : ").append(request.getMethod());
         requestStr.append(WRAN_LINE_SIGN);
-        requestStr.append("ContentType : " +request.getContentType());
+        requestStr.append("ContentType : ").append(request.getContentType());
         requestStr.append(WRAN_LINE_SIGN);
-        requestStr.append("Class_Method : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+        requestStr.append("Class_Method : ").append(joinPoint.getSignature().getDeclaringTypeName()).append(".").append(joinPoint.getSignature().getName());
         requestStr.append(WRAN_LINE_SIGN);
         requestStr.append("Url args : ");
-        Enumeration<String> enu=request.getParameterNames();
+        Enumeration<String> enu = request.getParameterNames();
         while(enu.hasMoreElements()){
-            String paraName=(String)enu.nextElement();
-            requestStr.append(" "+paraName+" = "+request.getParameter(paraName));
+            String paraName = enu.nextElement();
+            requestStr.append(" ").append(paraName).append(" = ").append(request.getParameter(paraName));
         }
         requestStr.append(WRAN_LINE_SIGN);
         Map<String,Object> header = new HashMap<>();
         Enumeration<String> requestHeader = request.getHeaderNames();
         while(requestHeader.hasMoreElements()){
             String key = requestHeader.nextElement();
-            if(key.equals("host") || key.equals("user-agent") || key.equals("userid") || key.equals("userId") || key.contains("token")) {
+            if(key.equals("host") || key.equals("user-agent") ||
+                    key.equalsIgnoreCase("userid") || key.toLowerCase().contains("token")
+                || key.toLowerCase().contains("appid")) {
                 String value = request.getHeader(key);
                 header.put(key, value);
             }
         }
-        requestStr.append("Header args : " + header.toString());
-        if(request.getDispatcherType().name().equals("ERROR")){
+        requestStr.append("Header args : ").append(header.toString());
+        if(request.getDispatcherType().name().equalsIgnoreCase("ERROR")){
             _logger.info(requestStr.toString());
             return;
         }
@@ -97,43 +102,38 @@ public class WebLogAspect {
             }else{
                 for (int i = 0; i < joinPoint.getArgs().length; i++) {
                     if(joinPoint.getArgs()[i]!=null) {
-                        requestStr.append(joinPoint.getArgs()[i] + "  ");
+                        requestStr.append(joinPoint.getArgs()[i]).append("  ");
                     }
                 }
             }
             requestStr.append(WRAN_LINE_SIGN);
         }
-        requestStr.append("--------------------------------------------------------------------------------------------------");
+        requestStr.append(LINE);
         _logger.info(requestStr.toString());
 
 
     }
 
     @AfterReturning(returning = "ret", pointcut = "webLog()")
-    public void doAfterReturning(Object ret) throws Throwable {
-        if(CommonUtils.isBlank(ret+"")){
+    public void doAfterReturning(Object ret) {
+        if(ObjectUtils.isEmpty(ret)){
             return;
         }
 
         // 处理完请求，返回内容
-        StringBuffer responseStr = new StringBuffer("response ==> ");
+        StringBuilder responseStr = new StringBuilder("response ==> ");
         responseStr.append(WRAN_LINE_SIGN);
-        responseStr.append("--------------------------------------------------------------------------------------------------");
+        responseStr.append(LINE);
         responseStr.append(WRAN_LINE_SIGN);
-
-        String typeName = ret.getClass().getTypeName();
-        if(typeName.equals("java.lang.String")){
-            responseStr.append(ret);
-        }else if(typeName.equals("byte[]")){
-
-        }
-        else {
+        try {
             responseStr.append(GsonUtils.toJson(ret));
+        }catch (Exception e){
+            responseStr.append(ret);
         }
         responseStr.append(WRAN_LINE_SIGN);
-        responseStr.append("--------------------------------------------------------------------------------------------------");
+        responseStr.append(LINE);
         if(responseStr.toString().length() > 3000){
-            _logger.info(responseStr.toString().substring(0,2990)+"......");
+            _logger.info("{} ......", responseStr.toString().substring(0,2990));
         }else {
             _logger.info(responseStr.toString());
         }
