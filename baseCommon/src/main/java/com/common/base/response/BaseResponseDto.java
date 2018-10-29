@@ -6,7 +6,7 @@ import com.common.base.BaseDto;
 public class BaseResponseDto<T> extends BaseDto {
 
     private Boolean success = false;
-    private int code; //对应HttpServletResponse中的状态码
+    private int code;
     private String message;
     private T data;
 

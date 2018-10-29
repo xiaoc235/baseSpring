@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class RedisManager {
 
-    public static final TypeToken<List<String>>  listStringTypeToken = new TypeToken<List<String>>(){};
+    public static final TypeToken<List<String>>  LIST_STR_TYPE_TOKEN = new TypeToken<List<String>>(){};
 
     private RedisClient redisClient;
 

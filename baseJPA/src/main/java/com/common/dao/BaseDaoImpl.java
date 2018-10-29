@@ -33,16 +33,13 @@ import java.util.Map;
 @Qualifier("BaseDao")
 public abstract class BaseDaoImpl<T>{
 
-
-    private static final Logger _logger = LoggerFactory.getLogger(BaseDaoImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseDaoImpl.class);
 
     private static final String LIMIT_SQL = " limit ";
     private static final String ORDER_BY_SQL = " order by ";
 
-
     @PersistenceContext(unitName = "entityManagerFactory")
     EntityManager entityManager;
-
 
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -67,8 +64,8 @@ public abstract class BaseDaoImpl<T>{
             }
             resultList = GsonUtils.convertList(jsonList.toString(), clazz);
         }catch (Exception e){
-            _logger.error(e.getMessage(),e);
-            resultList = new ArrayList();
+            logger.error(e.getMessage(),e);
+            resultList = new ArrayList<>();
         }
         return resultList;
     }
@@ -86,8 +83,6 @@ public abstract class BaseDaoImpl<T>{
            return null;
        }
     }
-
-
 
     /**
      * 查询数据集合，分页
@@ -117,11 +112,9 @@ public abstract class BaseDaoImpl<T>{
             }
         }
 
-
         //分页sql拼接 limit
         pageSql.append(LIMIT_SQL);
         pageSql.append(pageNumber * pageSize).append(",").append(pageSize);
-
 
         String querySql = pageSql.toString();
         List<T> resultList = this.queryListEntity(querySql,params,clazz);
@@ -136,26 +129,16 @@ public abstract class BaseDaoImpl<T>{
         return pageResult;
     }
 
-
-
-
     /**
      * 获取记录条数
-     * @param sql
-     * @param params
-     * @return
      */
     protected Integer getCountBy(String sql,Map<String, Object> params){
         BigInteger bigInteger  = (BigInteger) this.query(sql,params).getSingleResult();
         return bigInteger.intValue();
     }
 
-
     /**
      *  查询单个值
-     * @param sql
-     * @param params
-     * @return
      */
     protected Map<String,Object> getSingleResultMap(String sql,Map<String, Object> params){
             return (Map<String, Object>)getSingleResult(sql, params);
@@ -183,7 +166,7 @@ public abstract class BaseDaoImpl<T>{
 
     private Query query(final String sql,  Map<String, Object> params){
         Query query =  entityManager.createNativeQuery(sql);
-        _logger.info("sql :{} ", sql);
+        logger.info("sql :{} ", sql);
         if (params != null) {
             StringBuilder paramStr = new StringBuilder();
 
@@ -191,29 +174,30 @@ public abstract class BaseDaoImpl<T>{
                 paramStr.append(entry.getKey()+"="+entry.getValue()+" ");
                 query.setParameter(entry.getKey(), entry.getValue());
             }
-            _logger.info("params [{}]",paramStr);
+            logger.info("params [{}]",paramStr);
         }
         return query;
     }
 
-    private NativeQuery getSqlQuery(final String sql,  Map<String, Object> params){
+    private NativeQuery<T> getSqlQuery(final String sql,  Map<String, Object> params){
         Session session = entityManager.unwrap(Session.class);
-        NativeQuery query = session.createNativeQuery(sql);
-        _logger.info("sql :{} ", sql);
+        NativeQuery<T> query = session.createNativeQuery(sql);
+        logger.info("sql :{} ", sql);
         if (params != null) {
             StringBuilder paramStr = new StringBuilder();
             for(Map.Entry<String,Object> entry : params.entrySet()){
                 paramStr.append(entry.getKey()).append("=").append(entry.getValue()).append(" ");
                 query.setParameter(entry.getKey(), entry.getValue());
             }
-            _logger.info("params :{}",paramStr);
+            logger.info("params :{}",paramStr);
         }
         return query;
     }
 
 
     private List<T> queryList(String sql, Map<String, Object> params){
-        List<T> resultList = this.getSqlQuery(sql,params).list();
+        NativeQuery<T> query = this.getSqlQuery(sql,params);
+        List<T> resultList = query.getResultList();
         if(resultList == null){
             resultList = new ArrayList<>();
         }
@@ -233,9 +217,9 @@ public abstract class BaseDaoImpl<T>{
             if(entry.getValue()!=null) {
                 String key = CommonUtils.camelName(entry.getKey());
                 String classTypeName = entry.getValue().getClass().getTypeName();
-                if(classTypeName.equals("java.lang.Integer")){
+                if("java.lang.Integer".equals(classTypeName)){
                     jsonObject.addProperty(key, Integer.parseInt(entry.getValue()+""));
-                }else if(classTypeName.equals("java.sql.Timestamp")){
+                }else if("java.sql.Timestamp".equals(classTypeName)){
                     Timestamp timestamp = (Timestamp) entry.getValue();
                     jsonObject.addProperty(key,timestamp.getTime());
                 }

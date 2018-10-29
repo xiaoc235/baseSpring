@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class BaseController {
 
-    private static final Logger _logger = LoggerFactory.getLogger(BaseController.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseController.class);
 
 
     private static final int FAIL_CODE = 1;
@@ -38,7 +38,7 @@ public class BaseController {
     @Autowired
     protected RedisClient redis;
 
-    private static final Map<String,String> nullMap = new HashMap<>();
+    private static final Map<String,String> NULL_MAP = new HashMap<>();
 
     protected boolean isBlank(final Object param){
         return CommonUtils.isBlank(param);
@@ -139,7 +139,7 @@ public class BaseController {
      */
     public ResponseEntity<BaseResponseDto> failResponse(final int code, final String message, Object obj){
         if(obj == null){
-            obj = nullMap;
+            obj = NULL_MAP;
         }
         if(message.contains(CommConstants.LOGIN_OUT_MESSAGE)){
             return new ResponseEntity<>(new BaseResponseDto<>(false,code,message,obj),HttpStatus.UNAUTHORIZED);
@@ -154,7 +154,7 @@ public class BaseController {
      * @return
      */
     public ResponseEntity<BaseResponseDto> errorResponse(final int code,final String message){
-        return new ResponseEntity<>(new BaseResponseDto<>(false,code,message,nullMap),HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new BaseResponseDto<>(false,code,message,NULL_MAP),HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -163,7 +163,7 @@ public class BaseController {
      * @return
      */
     public ResponseEntity<BaseResponseDto> errorResponse(HttpStatus httpStatus,final String message){
-        return new ResponseEntity<>(new BaseResponseDto<>(false, HttpStatus.INTERNAL_SERVER_ERROR.value(),message,nullMap),httpStatus);
+        return new ResponseEntity<>(new BaseResponseDto<>(false, HttpStatus.INTERNAL_SERVER_ERROR.value(),message,NULL_MAP),httpStatus);
     }
 
     public ResponseEntity<BaseResponseDto> errorResponse(final String message){
@@ -197,7 +197,7 @@ public class BaseController {
      */
     public ResponseEntity<BaseResponseDto> succResponse(final String message, Object obj, final String jsonKey){
         if(obj == null){
-            obj = nullMap;
+            obj = NULL_MAP;
         }
         if(isBlank(jsonKey)){
             return new ResponseEntity<>(new BaseResponseDto<>(true, SUCC_CODE, message, obj), HttpStatus.OK);
@@ -219,11 +219,11 @@ public class BaseController {
             return method.call();
         }catch (BusinessException ex) {
             final String message = ex.getErrorDesc();
-            _logger.info(CommConstants.BUSINESS_ERROR + " " + message,ex);
+            logger.info(CommConstants.BUSINESS_ERROR + " " + message,ex);
             return failResponse(ex.getErrorCode(),message);
         }catch (Exception e) {
             final String message = CommConstants.SYSTEM_ERROR;
-            _logger.error(message, e);
+            logger.error(message, e);
             return errorResponse(message);
         }
     }

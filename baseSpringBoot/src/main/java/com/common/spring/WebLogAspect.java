@@ -26,13 +26,13 @@ import java.util.Map;
 @Component
 public class WebLogAspect {
 
-    private static final Logger _logger = LoggerFactory.getLogger(WebLogAspect.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebLogAspect.class);
 
     private static final String WRAN_LINE_SIGN = "\r\n";
 
     private static final String LINE = "--------------------------------------------------------------------------------------------------";
 
-    private static final String application_json = "application/json";
+    private static final String APPLICATION_JSON = "application/json";
 
     /**
      *
@@ -82,22 +82,22 @@ public class WebLogAspect {
         Enumeration<String> requestHeader = request.getHeaderNames();
         while(requestHeader.hasMoreElements()){
             String key = requestHeader.nextElement();
-            if(key.equals("host") || key.equals("user-agent") ||
-                    key.equalsIgnoreCase("userid") || key.toLowerCase().contains("token")
+            if("host".equals(key) || "user-agent".equals(key) ||
+                    "userid".equalsIgnoreCase(key) || key.toLowerCase().contains("token")
                 || key.toLowerCase().contains("appid")) {
                 String value = request.getHeader(key);
                 header.put(key, value);
             }
         }
         requestStr.append("Header args : ").append(header.toString());
-        if(request.getDispatcherType().name().equalsIgnoreCase("ERROR")){
-            _logger.info(requestStr.toString());
+        if("ERROR".equalsIgnoreCase(request.getDispatcherType().name())){
+            logger.info("{}",requestStr);
             return;
         }
         requestStr.append(WRAN_LINE_SIGN);
         if(joinPoint.getArgs()!=null) {
             requestStr.append("Body args : ");
-            if(request.getContentType() !=null && request.getContentType().contains(application_json)) {
+            if(request.getContentType() !=null && request.getContentType().contains(APPLICATION_JSON)) {
                 requestStr.append(GsonUtils.toJson(joinPoint.getArgs()));
             }else{
                 for (int i = 0; i < joinPoint.getArgs().length; i++) {
@@ -109,7 +109,7 @@ public class WebLogAspect {
             requestStr.append(WRAN_LINE_SIGN);
         }
         requestStr.append(LINE);
-        _logger.info(requestStr.toString());
+        logger.info("{}", requestStr);
 
 
     }
@@ -133,9 +133,9 @@ public class WebLogAspect {
         responseStr.append(WRAN_LINE_SIGN);
         responseStr.append(LINE);
         if(responseStr.toString().length() > 3000){
-            _logger.info("{} ......", responseStr.toString().substring(0,2990));
+            logger.info("{} ......", responseStr.toString().substring(0,2990));
         }else {
-            _logger.info(responseStr.toString());
+            logger.info(responseStr.toString());
         }
     }
 

@@ -8,20 +8,20 @@ import java.util.List;
 public class MyPageResult<T> {
 
     //总共多少条
-    private int totalCount;
+    private long totalCount;
 
     //总共多少页
     private int totalPageNumber;
 
-    //排序
+    //结果
     private List<T> resultList;
 
 
-    public int getTotalCount() {
+    public long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(int totalCount) {
+    public void setTotalCount(long totalCount) {
         this.totalCount = totalCount;
     }
 

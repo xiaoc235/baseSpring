@@ -42,6 +42,13 @@ public class CheckUtils {
         }
     }
 
+    public static void checkEmail(final String email) throws BusinessException{
+        checkParamNull(email,"邮箱不能为空");
+        if(!CommonUtils.isEmail(email)){
+            throw new BusinessException("请输入正确的邮箱地址");
+        }
+    }
+
 
 
 }

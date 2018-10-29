@@ -1,29 +1,12 @@
 package com.common.utils;
 
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by jianghaoming on 2017/11/13.
  */
 public class CommonUtils {
-
-    /**
-     * @Title: 手机号码验证
-     * @author jianghaoming
-     * @return true 通过验证， false 未通过
-     */
-    public static boolean isMobile(final String mobile) {
-        Pattern pattern = null;
-        Matcher matcher = null;
-        boolean result = false;
-        pattern = Pattern.compile("^[1][3,4,5,8,7][0-9]{9}$"); // 验证手机号
-        matcher = pattern.matcher(mobile);
-        result = matcher.matches();
-        return result;
-    }
-
 
     /**
      * 创建指定数量的随机字符串
@@ -33,12 +16,11 @@ public class CommonUtils {
      * @return String
      */
     public static String createRandom(boolean numberFlag, int length) {
-        String retStr = "";
+        StringBuilder retStr = new StringBuilder();
         String strTable = numberFlag ? "1234567890" : "1234567890abcdefghijkmnpqrstuvwxyz";
         int len = strTable.length();
         boolean bDone = true;
         do {
-            retStr = "";
             int count = 0;
             for (int i = 0; i < length; i++) {
                 double dblR = Math.random() * len;
@@ -47,13 +29,13 @@ public class CommonUtils {
                 if (('0' <= c) && (c <= '9')) {
                     count++;
                 }
-                retStr += strTable.charAt(intR);
+                retStr.append(strTable.charAt(intR));
             }
             if (count >= 2) {
                 bDone = false;
             }
         } while (bDone);
-        return retStr;
+        return retStr.toString();
     }
 
 
@@ -102,7 +84,7 @@ public class CommonUtils {
             return name.substring(0, 1).toLowerCase() + name.substring(1);
         }
         // 用下划线将原始字符串分割
-        String camels[] = name.split("_");
+        String[] camels = name.split("_");
         for (String camel :  camels) {
             // 跳过原始字符串中开头、结尾的下换线或双重下划线
             if (camel.isEmpty()) {
@@ -122,19 +104,17 @@ public class CommonUtils {
     }
 
 
-    /**
-     * 判断邮箱格式
-     * @param email
-     * @return
-     */
     public static boolean isEmail(final String email){
         String check = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
         Pattern regex = Pattern.compile(check);
         return regex.matcher(email).matches();
     }
 
-
-
+    public static boolean isMobile(final String mobile) {
+        String check = "^[1][3, 4, 5, 8, 7][0-9]{9}$";
+        Pattern regex = Pattern.compile(check);
+        return regex.matcher(mobile).matches();
+    }
 
     /**
      * 两个类值相互转换
@@ -143,7 +123,6 @@ public class CommonUtils {
     public static <T> T convertObj(Object obj,  Class<T> tClass) {
         String objJons = GsonUtils.toJson(obj);
         return GsonUtils.convertObj(objJons, tClass);
-
     }
 
 

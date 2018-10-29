@@ -1,5 +1,5 @@
 
-?squid:S16434"Use a StringBuilder instead.(æ”¤õþÿÿÿÿ8Ùž»ýá,
-[squid:S1197k"8Move the array designator from the variable to the type.(®…·áÿÿÿÿÿ8Ùž»ýá,
-Xsquid:S1118":Add a private constructor to hide the implicit public one.(§Á¡Œ8Ùž»ýá,
-ssquid:UselessImportCheck"HRemove this unused import 'com.common.base.exception.BusinessException'.(Êà—È8Ùž»ýá,
+[squid:S1197i"8Move the array designator from the variable to the type.(®…·áÿÿÿÿÿ8Ùž»ýá,
+Xsquid:S1118
+":Add a private constructor to hide the implicit public one.(§Á¡Œ8Ùž»ýá,
+?squid:S16432"Use a StringBuilder instead.(æ”¤õþÿÿÿÿ8Ùž»ýá,

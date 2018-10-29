@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>baseJPA</artifactId>
-    <version>2.0.RELEASE</version>
+    <version>2.0.1.RELEASE</version>
     <packaging>jar</packaging>
 
     <dependencies>

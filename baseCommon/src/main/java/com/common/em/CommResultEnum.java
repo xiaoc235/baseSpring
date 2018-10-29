@@ -1,16 +1,18 @@
 package com.common.em;
 
 /**
-*  0:否 1:是
+*  基本结果
  */
 public enum CommResultEnum {
+    //是
     YES("1"),
+    //否
     NO("0");
 
     private String value ;
 
-    private CommResultEnum(final String _value) {
-        this.value = _value;
+    private CommResultEnum(final String value) {
+        this.value = value;
     }
 
     public String getValue() {
