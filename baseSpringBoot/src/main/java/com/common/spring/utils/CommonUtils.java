@@ -110,7 +110,7 @@ public class CommonUtils extends com.common.utils.CommonUtils {
         "HTTP_X_FORWARDED_FOR","X-Real-IP"};
 
         String ip = request.getHeader("x-forwarded-for");
-        if (CommonUtils.isBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
+        if (!CommonUtils.isBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
             // 多次反向代理后会有多个ip值，第一个ip才是真实ip
             if(ip.contains(",")){
                 ip = ip.split(",")[0];
