@@ -1,6 +1,7 @@
 package com.common.redis;
 
 import com.common.base.exception.BusinessException;
+import com.common.spring.utils.CommonUtils;
 import com.common.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import io.lettuce.core.RedisURI;
@@ -25,6 +26,7 @@ import java.util.List;
 @Component("RedisClient")
 public class RedisClient {
 
+
 	private static RedisProperties redisProperties;
 
 	@Autowired
@@ -34,17 +36,17 @@ public class RedisClient {
 
     private static StatefulRedisConnection<String, String> connection = null;
     private static io.lettuce.core.RedisClient lettuceRedis = null;
-    private static String APPLICATION_NAME = "";
+    private static String APPLICATION_NAME = "a_";
 
 	private static synchronized void initRedis(){
 		String passwd = redisProperties.getPassword();
 		String host = redisProperties.getHost();
-		String port = redisProperties.getPort();
-        APPLICATION_NAME = redisProperties.getApplicationName();
+		int port = redisProperties.getPort();
+        APPLICATION_NAME = APPLICATION_NAME + redisProperties.getApplicationName();
         if(ObjectUtils.isEmpty(lettuceRedis)){
             RedisURI uri = new RedisURI();
             uri.setHost(host);
-            uri.setPort(Integer.parseInt(port));
+            uri.setPort(port);
             if(!ObjectUtils.isEmpty(passwd)) {
                 uri.setPassword(passwd);
             }
@@ -96,9 +98,9 @@ public class RedisClient {
 
 	public void set(String key, String value, int seconds){
         if(seconds > 0) {
-            getAsyncCommand().setex(APPLICATION_NAME + key, seconds, value);
+            getAsyncCommand().setex(this.buildKey(key), seconds, value);
         }else{
-            getAsyncCommand().set(APPLICATION_NAME + key,value);
+            getAsyncCommand().set(this.buildKey(key),value);
         }
 	}
 
@@ -126,21 +128,66 @@ public class RedisClient {
 	 * @return String
 	 */
 	public String get(String key){
-		return getCommand().get(APPLICATION_NAME + key);
+	    if(this.exists(this.buildKey(key))) {
+           return getCommand().get(this.buildKey(key));
+        }
+		return "";
 	}
-	
-	/**
+
+    public String get(String key, RedisFunction.GetByString function) throws Exception {
+        if(this.exists(key)){
+            return this.get(key);
+        }
+        return function.get();
+    }
+
+    /**
+     * 读取并保存
+     * @author jianghaoming
+     * @date 2019-01-07 14:54:37
+     */
+    public String getAndSave(BaseCacheEntity entity, RedisFunction.GetByString function) throws Exception {
+        String value = this.get(entity.getCacheKey(), function);
+	    this.set(entity.getCacheKey(), value, entity.getCacheTime());
+	    return value;
+    }
+
+
+    /**
 	 * 读取 对象
 	 * @param key
 	 * @return object
 	 */
 	public <T> T get(String key, TypeToken<T> typeToken){
-		String json = get(key);
-		return  GsonUtils.conver(json, typeToken);
+	    if(this.exists(buildKey(key))){
+            String json = get(key);
+            return  GsonUtils.conver(json, typeToken);
+        }
+		return null;
 	}
 
+    public <T> T get(String key, TypeToken<T> typeToken, RedisFunction.GetByTypeToken<T> function) throws Exception {
+        T result = this.get(key,typeToken);
+        if(CommonUtils.isBlank(result)){
+            return function.get();
+        }
+        return result;
+    }
+
+    /**
+     * 读取并保存
+     * @author jianghaoming
+     * @date 2019-01-07 14:54:37
+     */
+    public <T> T getAndSave(BaseCacheEntity entity, TypeToken<T> typeToken, RedisFunction.GetByTypeToken<T> function) throws Exception {
+        T value = this.get(entity.getCacheKey(),typeToken, function);
+        this.set(entity.getCacheKey(), value, entity.getCacheTime());
+        return value;
+    }
+
+
 	public Boolean exists(String key){
-		return getCommand().exists(APPLICATION_NAME + key) > 0;
+		return getCommand().exists(buildKey(key)) > 0;
 	}
 
 	/**
@@ -162,21 +209,21 @@ public class RedisClient {
 	 */
 	public int getTtl(String key) throws BusinessException {
 		checkNull(key);
-		return Math.toIntExact(getCommand().ttl(APPLICATION_NAME + key));
+		return Math.toIntExact(getCommand().ttl(buildKey(key)));
 	}
 
     /**
      * 获取key值列表
      */
 	public List<String> getKeys(String pattern){
-        return getCommand().keys(APPLICATION_NAME + pattern);
+        return getCommand().keys(buildKey(pattern));
     }
 
 	/**
 	 * 删除
 	 */
 	public void delKey(String key){
-		getAsyncCommand().del(APPLICATION_NAME + key);
+		getAsyncCommand().del(buildKey(key));
 	}
 
 	public void delKeys(String pattern){
@@ -201,6 +248,12 @@ public class RedisClient {
 		getCommand().flushall();
 	 }
 
+	 private String buildKey(String key){
+	     if(key.startsWith("a_")){
+	         return key;
+         }
+	     return APPLICATION_NAME + key;
+     }
 
 	
 }

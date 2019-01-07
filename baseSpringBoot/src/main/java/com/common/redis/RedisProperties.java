@@ -10,13 +10,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix="spring.redis")
-public class RedisProperties extends BaseDto {
-
-    private String password = "";
-
-    private String host = "127.0.0.1";
-
-    private String port = "6379";
+public class RedisProperties extends org.springframework.boot.autoconfigure.data.redis.RedisProperties {
 
     private String applicationName = "";
 
@@ -26,29 +20,5 @@ public class RedisProperties extends BaseDto {
 
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getPort() {
-        return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
     }
 }

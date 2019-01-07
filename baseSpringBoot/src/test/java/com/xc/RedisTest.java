@@ -1,6 +1,9 @@
 package com.xc;
 
+import com.common.redis.RedisClient;
+import com.common.redis.RedisProperties;
 import com.common.utils.GsonUtils;
+import com.google.gson.reflect.TypeToken;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
@@ -83,6 +86,45 @@ public class RedisTest {
         long getT2 = System.currentTimeMillis();
         System.out.println("查询总用时:" + (getT2 - getT1));
         System.out.println("总用时:" + (getT2 - setT1));
+    }
+
+
+    @Test
+    public void testRedisFunction() throws Exception {
+        RedisClient redis = new RedisClient();
+        RedisProperties redisProperties = new RedisProperties();
+        redis.setRedisProperties(redisProperties);
+        String key = "t_function";
+        String result = redis.get(key, () ->{
+            String value = "test";
+            System.out.println("没有缓存");
+            redis.set(key, value);
+            return value;
+        });
+        System.out.println("result:" + result);
+
+
+        String key2 = "t_function_user";
+        TestUser resultUser = redis.get(key2, new TypeToken<TestUser>(){}, () -> {
+            TestUser value = new TestUser("name",10);
+            System.out.println("no entity cache");
+            redis.set(key2, value);
+            return value;
+        });
+        System.out.println(GsonUtils.toJson(resultUser));
+
+    }
+
+    @Test
+    public void testGetAndSet() throws Exception {
+        RedisClient redis = new RedisClient();
+        RedisProperties redisProperties = new RedisProperties();
+        redis.setRedisProperties(redisProperties);
+        RedisEntity redisEntity = RedisEntity.instance;
+        String result = redis.getAndSave(redisEntity, () -> "this a testaaa");
+        System.out.println("result:" + result);
+        System.out.println("cacheKey: " + redisEntity.getCacheKey());
+        System.out.println("cacheValue: " + redis.get(redisEntity.getCacheKey()));
     }
 
 }
