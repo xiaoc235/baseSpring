@@ -1,7 +1,7 @@
 package com.xc;
 
 import com.common.redis.RedisClient;
-import com.common.redis.RedisProperties;
+import com.common.redis.MyRedisProperties;
 import com.common.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class SerializeTest implements Serializable{
         TestUser user = new TestUser("test1",1);
         final String testkey = "t_k_obj";
         RedisClient redis = new RedisClient();
-        redis.setRedisProperties(new RedisProperties());
+        redis.setRedisProperties(new MyRedisProperties());
         long currentTime = System.currentTimeMillis();
         redis.set(testkey,user);
         System.out.println(System.currentTimeMillis() - currentTime);
@@ -67,7 +67,7 @@ public class SerializeTest implements Serializable{
 
         final String testkey = "t_k_list";
         RedisClient redis = new RedisClient();
-        redis.setRedisProperties(new RedisProperties());
+        redis.setRedisProperties(new MyRedisProperties());
 
         List<TestUser> list = new ArrayList<>();
         long currentTime = System.currentTimeMillis();
@@ -95,7 +95,7 @@ public class SerializeTest implements Serializable{
     public void testMap(){
         final String testkey = "t_k_map";
         RedisClient redis = new RedisClient();
-        redis.setRedisProperties(new RedisProperties());
+        redis.setRedisProperties(new MyRedisProperties());
 
         Map<String,TestUser> map = new HashMap<>();
         long currentTime = System.currentTimeMillis();

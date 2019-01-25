@@ -12,12 +12,10 @@ public final class ToolSpring implements ApplicationContextAware {
 	private static ApplicationContext applicationContext = null;
 
 	@Override
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
+	public void setApplicationContext(ApplicationContext applicationContext) {
 		if(ToolSpring.applicationContext == null){
 			ToolSpring.applicationContext  = applicationContext;
 		}
-		
 	}
 	public static ApplicationContext getApplicationContext() {
 		return applicationContext;

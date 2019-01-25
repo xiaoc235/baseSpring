@@ -1,6 +1,7 @@
 package com.common.spring.utils;
 
 import com.common.base.exception.BusinessException;
+import com.common.utils.FileTxtUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,12 +37,7 @@ public class CommonUtils extends com.common.utils.CommonUtils {
         BufferedOutputStream stream = null;
         File filet = null;
         try {
-            File dir = new File(filePath);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-
-
+            FileTxtUtils.mkdir(filePath);
             byte[] bytes = file.getBytes();
             filet = new File(filePath + fileName);
             stream = new BufferedOutputStream(new FileOutputStream(filet));

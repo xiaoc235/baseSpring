@@ -121,8 +121,8 @@ public class CommonUtils {
      */
 
     public static <T> T convertObj(Object obj,  Class<T> tClass) {
-        String objJons = GsonUtils.toJson(obj);
-        return GsonUtils.convertObj(objJons, tClass);
+        String objJsons = GsonUtils.toJson(obj);
+        return GsonUtils.convertObj(objJsons, tClass);
     }
 
 

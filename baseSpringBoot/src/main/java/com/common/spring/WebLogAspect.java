@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,7 +47,8 @@ public class WebLogAspect {
     @Pointcut("execution(public * *..*Controller.*(..))")
     public void webLog(){}
 
-
+    //要打印的 request header
+    private static final String[]  PRINT_REQUEST_HEADER = {"host","user-agent","userId","appId","token"};
 
     @Before("webLog()")
     public void doBefore(JoinPoint joinPoint) {
@@ -56,8 +59,9 @@ public class WebLogAspect {
         if(request.getRequestURI().toLowerCase().endsWith("/error")){
             return;
         }
-
-        StringBuilder requestStr = new StringBuilder("request ==> ");
+        StringBuilder requestStr = new StringBuilder(WRAN_LINE_SIGN);
+        requestStr.append(LINE);
+        requestStr.append("request ==> ");
         requestStr.append(WRAN_LINE_SIGN);
         requestStr.append(LINE);
         requestStr.append(WRAN_LINE_SIGN);
@@ -82,11 +86,11 @@ public class WebLogAspect {
         Enumeration<String> requestHeader = request.getHeaderNames();
         while(requestHeader.hasMoreElements()){
             String key = requestHeader.nextElement();
-            if("host".equals(key) || "user-agent".equals(key) ||
-                    "userid".equalsIgnoreCase(key) || key.toLowerCase().contains("token")
-                || key.toLowerCase().contains("appid")) {
-                String value = request.getHeader(key);
-                header.put(key, value);
+            for(String printHeader : PRINT_REQUEST_HEADER){
+                if(printHeader.equalsIgnoreCase(key)){
+                    String value = request.getHeader(key);
+                    header.put(key, value);
+                }
             }
         }
         requestStr.append("Header args : ").append(header.toString());
@@ -95,14 +99,14 @@ public class WebLogAspect {
             return;
         }
         requestStr.append(WRAN_LINE_SIGN);
-        if(joinPoint.getArgs()!=null) {
+        if(!ObjectUtils.isEmpty(joinPoint.getArgs())) {
             requestStr.append("Body args : ");
-            if(request.getContentType() !=null && request.getContentType().contains(APPLICATION_JSON)) {
+            if(request.getContentType() != null && request.getContentType().contains(APPLICATION_JSON)) {
                 requestStr.append(GsonUtils.toJson(joinPoint.getArgs()));
             }else{
-                for (int i = 0; i < joinPoint.getArgs().length; i++) {
-                    if(joinPoint.getArgs()[i]!=null) {
-                        requestStr.append(joinPoint.getArgs()[i]).append("  ");
+                for(Object o : joinPoint.getArgs()){
+                    if(!ObjectUtils.isEmpty(o)){
+                        requestStr.append(o).append("  ");
                     }
                 }
             }
@@ -110,8 +114,6 @@ public class WebLogAspect {
         }
         requestStr.append(LINE);
         logger.info("{}", requestStr);
-
-
     }
 
     @AfterReturning(returning = "ret", pointcut = "webLog()")
@@ -121,7 +123,9 @@ public class WebLogAspect {
         }
 
         // 处理完请求，返回内容
-        StringBuilder responseStr = new StringBuilder("response ==> ");
+        StringBuilder responseStr = new StringBuilder(WRAN_LINE_SIGN);
+        responseStr.append(LINE);
+        responseStr.append("response ==> ");
         responseStr.append(WRAN_LINE_SIGN);
         responseStr.append(LINE);
         responseStr.append(WRAN_LINE_SIGN);

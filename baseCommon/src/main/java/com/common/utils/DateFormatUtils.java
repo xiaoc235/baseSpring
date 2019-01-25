@@ -1,17 +1,14 @@
 package com.common.utils;
 
 
-import com.sun.istack.internal.Nullable;
-
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
-public class DateFormatUtil {
+public class DateFormatUtils {
     public static final String      YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
-
     public static final String      YYYY_MM_DD          = "yyyy-MM-dd";
 
 
@@ -31,7 +28,7 @@ public class DateFormatUtil {
         return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(YYYY_MM_DD_HH_MM_SS));
     }
 
-    public static String timestamp2Str(Timestamp timestamp, @Nullable String pattern) {
+    public static String timestamp2Str(Timestamp timestamp, String pattern) {
         return date2Str(timestamp.toLocalDateTime(), pattern);
     }
 

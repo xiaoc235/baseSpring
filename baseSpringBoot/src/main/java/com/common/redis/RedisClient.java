@@ -27,22 +27,23 @@ import java.util.List;
 public class RedisClient {
 
 
-	private static RedisProperties redisProperties;
+	private static MyRedisProperties myRedisProperties;
 
 	@Autowired
-	public void setRedisProperties(RedisProperties redisProperties) {
-		RedisClient.redisProperties = redisProperties;
+	public void setRedisProperties(MyRedisProperties myRedisProperties) {
+		RedisClient.myRedisProperties = myRedisProperties;
 	}
 
     private static StatefulRedisConnection<String, String> connection = null;
     private static io.lettuce.core.RedisClient lettuceRedis = null;
+
     private static String APPLICATION_NAME = "a_";
 
 	private static synchronized void initRedis(){
-		String passwd = redisProperties.getPassword();
-		String host = redisProperties.getHost();
-		int port = redisProperties.getPort();
-        APPLICATION_NAME = APPLICATION_NAME + redisProperties.getApplicationName();
+		String passwd = myRedisProperties.getPassword();
+		String host = myRedisProperties.getHost();
+		int port = myRedisProperties.getPort();
+        APPLICATION_NAME = APPLICATION_NAME + myRedisProperties.getApplicationName();
         if(ObjectUtils.isEmpty(lettuceRedis)){
             RedisURI uri = new RedisURI();
             uri.setHost(host);

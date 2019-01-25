@@ -2,6 +2,7 @@ package com.common.spring.utils;
 
 import com.common.base.CommConstants;
 import com.common.base.exception.BusinessException;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,7 +17,7 @@ public class CheckUtils {
 
     public static void checkParamNull(Object object, String message) throws BusinessException {
         if(CommonUtils.isBlank(object)){
-            throw new BusinessException(message + " "+ CommConstants.NOT_NULL);
+            throw new BusinessException(HttpStatus.BAD_REQUEST.value(),message + " "+ CommConstants.NOT_NULL);
         }
     }
     public static void checkParamNull(Object object) throws BusinessException {

@@ -1,7 +1,7 @@
 package com.xc;
 
 import com.common.redis.RedisClient;
-import com.common.redis.RedisProperties;
+import com.common.redis.MyRedisProperties;
 import com.common.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import io.lettuce.core.RedisURI;
@@ -92,7 +92,7 @@ public class RedisTest {
     @Test
     public void testRedisFunction() throws Exception {
         RedisClient redis = new RedisClient();
-        RedisProperties redisProperties = new RedisProperties();
+        MyRedisProperties redisProperties = new MyRedisProperties();
         redis.setRedisProperties(redisProperties);
         String key = "t_function";
         String result = redis.get(key, () ->{
@@ -118,7 +118,7 @@ public class RedisTest {
     @Test
     public void testGetAndSet() throws Exception {
         RedisClient redis = new RedisClient();
-        RedisProperties redisProperties = new RedisProperties();
+        MyRedisProperties redisProperties = new MyRedisProperties();
         redis.setRedisProperties(redisProperties);
         RedisEntity redisEntity = RedisEntity.instance;
         String result = redis.getAndSave(redisEntity, () -> "this a testaaa");

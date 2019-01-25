@@ -40,7 +40,9 @@ public class CommConstants {
 
     public static final String LOGIN_OUT_MESSAGE = "登录超时";
 
-    public static  final String LOGIN_FAIL = "登录失败";
+    public static final String LOGIN_FAIL = "登录失败";
+
+    public static final String NOT_OPERATION = "没有操作权限";
 
 
 

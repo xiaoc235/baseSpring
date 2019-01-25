@@ -85,16 +85,7 @@ public class BaseController {
      * @return
      */
     protected String getMapParam(final String key, Map<String,Object> paramMap){
-        if (paramMap == null || paramMap.isEmpty() || CommonUtils.isBlank(key)
-                || !paramMap.containsKey(key)) {
-            return null;
-        }
-        Object obj = paramMap.get(key);
-        if (obj == null) {
-            return null;
-        }
-        String value = obj.toString();
-        return value.trim();
+       return CommonUtils.getMapParam(key, paramMap);
     }
 
     /**
@@ -104,7 +95,7 @@ public class BaseController {
      */
     protected String getMapParamAndCheckNull(final String key, Map<String,Object> paramMap) throws BusinessException {
         final String param = getMapParam(key,paramMap);
-        checkParamNull(param,key+"不能为空");
+        checkParamNull(param,key+" 不能为空");
         return param;
     }
 
@@ -133,7 +124,7 @@ public class BaseController {
     }
 
     /**
-     * 返回错误提示，返回data httpCode
+     * 返回已知错误提示，返回data httpCode
      * @param message
      * @return
      */
@@ -141,15 +132,16 @@ public class BaseController {
         if(obj == null){
             obj = NULL_MAP;
         }
-        if(message.contains(CommConstants.LOGIN_OUT_MESSAGE)){
-            return new ResponseEntity<>(new BaseResponseDto<>(false,code,message,obj),HttpStatus.UNAUTHORIZED);
+        HttpStatus httpStatus = HttpStatus.resolve(code);
+        if(null == httpStatus){
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<>(new BaseResponseDto<>(false,code,message,obj),HttpStatus.OK);
+        return new ResponseEntity<>(new BaseResponseDto<>(false,code,message,obj),httpStatus);
     }
 
 
     /**
-     * 系统错误，data为空  httpCode 500
+     * 返回未知错误提示，data为空  httpCode 500
      * @param message
      * @return
      */
@@ -163,7 +155,7 @@ public class BaseController {
      * @return
      */
     public ResponseEntity<BaseResponseDto> errorResponse(HttpStatus httpStatus,final String message){
-        return new ResponseEntity<>(new BaseResponseDto<>(false, HttpStatus.INTERNAL_SERVER_ERROR.value(),message,NULL_MAP),httpStatus);
+        return new ResponseEntity<>(new BaseResponseDto<>(false, httpStatus.value(),message,NULL_MAP),httpStatus);
     }
 
     public ResponseEntity<BaseResponseDto> errorResponse(final String message){

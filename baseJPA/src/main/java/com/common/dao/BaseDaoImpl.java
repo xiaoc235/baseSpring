@@ -1,15 +1,14 @@
 package com.common.dao;
 
-import com.common.base.model.MyPageResult;
 import com.common.utils.CommonUtils;
-import com.common.utils.GsonUtils;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -25,13 +24,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by jianghaoming on 2017/3/1523:08.
+ *
+ * @author jianghaoming
+ * @date 2017/3/1523:08
  */
 
 @Transactional
 @Repository
 @Qualifier("BaseDao")
-public abstract class BaseDaoImpl<T>{
+public abstract class BaseDaoImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseDaoImpl.class);
 
@@ -46,23 +47,15 @@ public abstract class BaseDaoImpl<T>{
     }
 
     /**
-     * * 查询数据集合,不分页
+     * * 查询数据集合,不分页T
      */
-    protected List<T> queryListEntity(String sql, Map<String, Object> params, Class<T> clazz){
-        //转换 --> map 转 json ,  json to List.Object
+    protected <T> List<T> queryListEntity(String sql, Map<String, Object> params, Class<T> clazz){
         List<T> resultList = null;
         try {
-            resultList = this.queryList(sql,params);
+            resultList = this.queryList(sql,params, clazz);
             if(resultList.isEmpty()){
                 return new ArrayList<>();
             }
-            JsonArray jsonList = new JsonArray();
-            for(T t : resultList){
-                Map<String,Object> map = (Map<String, Object>) t;
-                JsonObject jsonObject = convertJsonObject(map);
-                jsonList.add(jsonObject);
-            }
-            resultList = GsonUtils.convertList(jsonList.toString(), clazz);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             resultList = new ArrayList<>();
@@ -75,24 +68,23 @@ public abstract class BaseDaoImpl<T>{
      * 查询单条数据
      * 通过list来转换
      */
-    protected T queryEntity(String sql, Map<String, Object> params, Class<T> clazz){
-       List<Map<String,Object>> resultList = (List<Map<String,Object>>) this.queryList(sql,params);
-       if(!resultList.isEmpty()){
-           return GsonUtils.convertObj(convertJsonObject(resultList.get(0)).toString(),clazz);
-       }else{
-           return null;
-       }
+    protected  <T> T queryEntity(String sql, Map<String, Object> params, Class<T> clazz){
+        List<T> resultList = this.queryList(sql,params, clazz);
+        if(!resultList.isEmpty()){
+            return resultList.get(0);
+        }else{
+            return null;
+        }
     }
 
     /**
      * 查询数据集合，分页
      */
-    protected MyPageResult<T> queryListEntityByPage(String sql, Map<String, Object> params, Class clazz, Pageable pageable){
-        MyPageResult<T> pageResult = new MyPageResult<>();
+    protected <T> Page<T> queryListEntityByPage(String sql, Map<String, Object> params, Class<T> clazz, Pageable pageable){
+        PageImpl<T> pageResult = null;
         if(null == pageable){
             List<T> resultList = this.queryListEntity(sql,params,clazz);
-            pageResult.setResultList(resultList);
-            pageResult.setTotalCount(resultList.size());
+            pageResult = new PageImpl<>(resultList);
             return pageResult;
         }
 
@@ -105,10 +97,10 @@ public abstract class BaseDaoImpl<T>{
         //排序sql拼接 order by
         StringBuilder pageSql = new StringBuilder(sql);
         Sort sort = pageable.getSort();
-        if(sort!=null) {
+        if(sort.isSorted()) {
             pageSql.append(ORDER_BY_SQL);
             for (Sort.Order order : sort) {
-                pageSql.append(CommonUtils.underscoreName(order.getProperty()) + " " + order.getDirection());
+                pageSql.append(CommonUtils.underscoreName(order.getProperty())).append(" ").append(order.getDirection());
             }
         }
 
@@ -118,13 +110,8 @@ public abstract class BaseDaoImpl<T>{
 
         String querySql = pageSql.toString();
         List<T> resultList = this.queryListEntity(querySql,params,clazz);
-        pageResult.setResultList(resultList);
-
         final int totalCount = this.getCountBy("select count(1) from ("+sql+") t",params);
-        pageResult.setTotalCount(totalCount);
-
-        int totalPageNum = pageSize == 0 ? 1 : (int) Math.ceil((double) totalCount / (double) pageSize);
-        pageResult.setTotalPageNumber(totalPageNum);
+        pageResult = new PageImpl<>(resultList,pageable,totalCount);
 
         return pageResult;
     }
@@ -137,20 +124,6 @@ public abstract class BaseDaoImpl<T>{
         return bigInteger.intValue();
     }
 
-    /**
-     *  查询单个值
-     */
-    protected Map<String,Object> getSingleResultMap(String sql,Map<String, Object> params){
-            return (Map<String, Object>)getSingleResult(sql, params);
-    }
-
-    protected Object getSingleResult(String sql,Map<String, Object> params){
-        List<T> list = this.queryList(sql,params);
-        if(!list.isEmpty()){
-            return list.get(0);
-        }
-        return null;
-    }
 
     /**
      * 新增或者删除
@@ -179,9 +152,9 @@ public abstract class BaseDaoImpl<T>{
         return query;
     }
 
-    private NativeQuery<T> getSqlQuery(final String sql,  Map<String, Object> params){
+    private <T> NativeQuery<T> getSqlQuery(final String sql, Map<String, Object> params, Class<T> tClass){
         Session session = entityManager.unwrap(Session.class);
-        NativeQuery<T> query = session.createNativeQuery(sql);
+        NativeQuery<T> query = session.createNativeQuery(sql, tClass);
         logger.info("sql :{} ", sql);
         if (params != null) {
             StringBuilder paramStr = new StringBuilder();
@@ -195,8 +168,8 @@ public abstract class BaseDaoImpl<T>{
     }
 
 
-    private List<T> queryList(String sql, Map<String, Object> params){
-        NativeQuery<T> query = this.getSqlQuery(sql,params);
+    private <T> List<T> queryList(String sql, Map<String, Object> params, Class<T> tClass){
+        NativeQuery<T> query = this.getSqlQuery(sql,params,tClass);
         List<T> resultList = query.getResultList();
         if(resultList == null){
             resultList = new ArrayList<>();
@@ -207,7 +180,7 @@ public abstract class BaseDaoImpl<T>{
 
     /**
      * map 去除下划线，并转换为jsonObject
-     * @user jianghaoming 
+     * @user jianghaoming
      * @date 2017/11/13  下午4:45
      *
      */

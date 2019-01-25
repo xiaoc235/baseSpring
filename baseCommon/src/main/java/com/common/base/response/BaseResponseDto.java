@@ -1,9 +1,9 @@
 package com.common.base.response;
 
-import com.common.base.BaseDto;
+import com.common.base.BaseEntity;
 
 
-public class BaseResponseDto<T> extends BaseDto {
+public class BaseResponseDto<T> extends BaseEntity {
 
     private Boolean success = false;
     private int code;
