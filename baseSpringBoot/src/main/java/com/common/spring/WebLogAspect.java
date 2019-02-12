@@ -9,6 +9,8 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -26,6 +28,7 @@ import java.util.Map;
  */
 @Aspect
 @Component
+@Order(1)
 public class WebLogAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(WebLogAspect.class);
@@ -61,6 +64,7 @@ public class WebLogAspect {
         }
         StringBuilder requestStr = new StringBuilder(WRAN_LINE_SIGN);
         requestStr.append(LINE);
+        requestStr.append(WRAN_LINE_SIGN);
         requestStr.append("request ==> ");
         requestStr.append(WRAN_LINE_SIGN);
         requestStr.append(LINE);
@@ -125,6 +129,7 @@ public class WebLogAspect {
         // 处理完请求，返回内容
         StringBuilder responseStr = new StringBuilder(WRAN_LINE_SIGN);
         responseStr.append(LINE);
+        responseStr.append(WRAN_LINE_SIGN);
         responseStr.append("response ==> ");
         responseStr.append(WRAN_LINE_SIGN);
         responseStr.append(LINE);

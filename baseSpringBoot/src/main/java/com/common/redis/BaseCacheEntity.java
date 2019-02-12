@@ -20,6 +20,14 @@ public abstract class BaseCacheEntity {
         this.cacheTime = cacheTime;
     }
 
+    public void setCacheKey(String cacheKey) {
+        this.cacheKey = cacheKey;
+    }
+
+    public void setCacheTime(int cacheTime) {
+        this.cacheTime = cacheTime;
+    }
+
     public String getCacheKey() {
         return cacheKey;
     }
