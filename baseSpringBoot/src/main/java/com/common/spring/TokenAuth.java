@@ -19,19 +19,17 @@ public class TokenAuth {
 
     private HttpServletRequest request;
     private RedisClient redis;
-    private String appId;
 
-    public TokenAuth(HttpServletRequest httpServletRequest, RedisClient redisClient, String myAppId){
+    public TokenAuth(HttpServletRequest httpServletRequest, RedisClient redisClient){
         request = httpServletRequest;
         redis = redisClient;
-        appId = myAppId;
     }
 
     public <T> T getUserAndVerifyToken(final String token,  TypeToken<T> typeToken) throws BusinessException{
         if(CommonUtils.isBlank(token)){
             throw new BusinessException(HttpStatus.UNAUTHORIZED.value(), CommConstants.LOGIN_OUT_MESSAGE);
         }
-        T user = redis.get(appId + "_" + token, typeToken);
+        T user = redis.get(token, typeToken);
         if(null == user){
             throw new BusinessException(HttpStatus.UNAUTHORIZED.value(),CommConstants.LOGIN_OUT_MESSAGE);
         }

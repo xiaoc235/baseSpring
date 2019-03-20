@@ -31,7 +31,7 @@ public class CommonUtils {
                 }
                 retStr.append(strTable.charAt(intR));
             }
-            if (count >= 2) {
+            if (count >= 2 || retStr.length() >= length) {
                 bDone = false;
             }
         } while (bDone);
@@ -125,7 +125,12 @@ public class CommonUtils {
         return GsonUtils.convertObj(objJsons, tClass);
     }
 
-
+    public static void main(String[] args) {
+        for(int i=0; i<100; i++) {
+            String str = createRandom(false, 4);
+            System.out.println(str + " :" + str.length());
+        }
+    }
 
 
 

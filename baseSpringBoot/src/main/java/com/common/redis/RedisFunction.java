@@ -1,7 +1,5 @@
 package com.common.redis;
 
-import com.google.gson.reflect.TypeToken;
-
 /**
  * redis方法
  * @author jianghaoming

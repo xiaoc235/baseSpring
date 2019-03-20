@@ -13,13 +13,8 @@ public class RedisManager {
 
     public static final TypeToken<List<String>>  LIST_STR_TYPE_TOKEN = new TypeToken<List<String>>(){};
 
-    private RedisClient redisClient;
-
     private RedisClient getRedisClient() {
-        if (null == this.redisClient) {
-            this.redisClient = (RedisClient) ToolSpring.getBean("RedisClient");
-        }
-        return redisClient;
+        return (RedisClient) ToolSpring.getBean("RedisClient");
     }
 
     private static RedisManager instance = null;
@@ -32,6 +27,7 @@ public class RedisManager {
     private static RedisManager getInstance() {
         return instance;
     }
+
     public static RedisClient getRedis(){
         return getInstance().getRedisClient();
     }

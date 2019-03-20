@@ -1,13 +1,18 @@
 package com.xc;
 
+import com.common.redis.BaseCacheEntity;
 import com.common.redis.RedisClient;
 import com.common.redis.MyRedisProperties;
+import com.common.spring.utils.CommonUtils;
+import com.common.utils.DateFormatUtils;
 import com.common.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
@@ -15,6 +20,7 @@ import java.util.UUID;
 
 public class RedisTest {
 
+    private static final Logger log = LoggerFactory.getLogger(RedisTest.class);
 
 
     public class TestUser implements Serializable {
@@ -125,6 +131,42 @@ public class RedisTest {
         System.out.println("result:" + result);
         System.out.println("cacheKey: " + redisEntity.getCacheKey());
         System.out.println("cacheValue: " + redis.get(redisEntity.getCacheKey()));
+    }
+
+
+    public class ApiConfigCountCacheEntity extends BaseCacheEntity {
+        public ApiConfigCountCacheEntity(long configId){
+            super();
+            //次数有效期24小时
+            setCacheTime(3600 * 24);
+            //缓存key： 日期 + 数据库id
+            setCacheKey("api_count_" + DateFormatUtils.getCurrentDate() + "_" + configId);
+        }
+    }
+
+    RedisClient redis = new RedisClient();
+    MyRedisProperties redisProperties = new MyRedisProperties();
+
+    private void get(){
+        redis.setRedisProperties(redisProperties);
+        ApiConfigCountCacheEntity cacheEntity = new ApiConfigCountCacheEntity(1);
+        String cacheKey = cacheEntity.getCacheKey();
+        String countStr = redis.get(cacheKey);
+        int count = CommonUtils.isBlank(countStr) ? 0 : Integer.parseInt(countStr);
+        if(count <= 5){
+            //使用api
+            count++;
+            log.info("{} 当前已经使用:{}", 1, count);
+            redis.set(cacheKey, count+"");
+        }
+    }
+
+
+    @Test
+    public void testFor(){
+        for(int i=0; i<10; i++){
+            get();
+        }
     }
 
 }

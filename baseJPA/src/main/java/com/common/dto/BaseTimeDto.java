@@ -1,6 +1,6 @@
 package com.common.dto;
 
-import com.common.base.BaseDto;
+import com.common.base.BaseEntity;
 import com.common.base.annotation.CanNullAnnotation;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 
 
 @MappedSuperclass
-public class BaseTimeDto extends BaseDto {
+public class BaseTimeDto extends BaseEntity {
 
     @Column(name="create_time",updatable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

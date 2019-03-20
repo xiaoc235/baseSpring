@@ -37,13 +37,11 @@ public class RedisClient {
     private static StatefulRedisConnection<String, String> connection = null;
     private static io.lettuce.core.RedisClient lettuceRedis = null;
 
-    private static String APPLICATION_NAME = "a_";
-
 	private static synchronized void initRedis(){
 		String passwd = myRedisProperties.getPassword();
 		String host = myRedisProperties.getHost();
 		int port = myRedisProperties.getPort();
-        APPLICATION_NAME = APPLICATION_NAME + myRedisProperties.getApplicationName();
+		String applicationName = myRedisProperties.getApplicationName();
         if(ObjectUtils.isEmpty(lettuceRedis)){
             RedisURI uri = new RedisURI();
             uri.setHost(host);
@@ -129,8 +127,8 @@ public class RedisClient {
 	 * @return String
 	 */
 	public String get(String key){
-	    if(this.exists(this.buildKey(key))) {
-           return getCommand().get(this.buildKey(key));
+	    if(this.exists(key)) {
+           return getCommand().get(buildKey(key));
         }
 		return "";
 	}
@@ -149,7 +147,9 @@ public class RedisClient {
      */
     public String getAndSave(BaseCacheEntity entity, RedisFunction.GetByString function) throws Exception {
         String value = this.get(entity.getCacheKey(), function);
-	    this.set(entity.getCacheKey(), value, entity.getCacheTime());
+        if(!CommonUtils.isBlank(value)) {
+            this.set(entity.getCacheKey(), value, entity.getCacheTime());
+        }
 	    return value;
     }
 
@@ -160,7 +160,7 @@ public class RedisClient {
 	 * @return object
 	 */
 	public <T> T get(String key, TypeToken<T> typeToken){
-	    if(this.exists(buildKey(key))){
+	    if(this.exists(key)){
             String json = get(key);
             return  GsonUtils.conver(json, typeToken);
         }
@@ -182,13 +182,16 @@ public class RedisClient {
      */
     public <T> T getAndSave(BaseCacheEntity entity, TypeToken<T> typeToken, RedisFunction.GetByTypeToken<T> function) throws Exception {
         T value = this.get(entity.getCacheKey(),typeToken, function);
-        this.set(entity.getCacheKey(), value, entity.getCacheTime());
+        if(value != null) {
+            this.set(entity.getCacheKey(), value, entity.getCacheTime());
+        }
         return value;
     }
 
 
 	public Boolean exists(String key){
-		return getCommand().exists(buildKey(key)) > 0;
+        key = buildKey(key);
+		return getCommand().exists(key) > 0;
 	}
 
 	/**
@@ -250,10 +253,7 @@ public class RedisClient {
 	 }
 
 	 private String buildKey(String key){
-	     if(key.startsWith("a_")){
-	         return key;
-         }
-	     return APPLICATION_NAME + key;
+	     return myRedisProperties.getApplicationName() + "_"  + key;
      }
 
 	
