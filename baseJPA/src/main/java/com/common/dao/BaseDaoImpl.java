@@ -189,14 +189,13 @@ public abstract class BaseDaoImpl {
         for(Map.Entry<String,Object> entry : map.entrySet()){
             if(entry.getValue()!=null) {
                 String key = CommonUtils.camelName(entry.getKey());
-                String classTypeName = entry.getValue().getClass().getTypeName();
-                if("java.lang.Integer".equals(classTypeName)){
-                    jsonObject.addProperty(key, Integer.parseInt(entry.getValue()+""));
-                }else if("java.sql.Timestamp".equals(classTypeName)){
-                    Timestamp timestamp = (Timestamp) entry.getValue();
+                Object value = entry.getValue();
+                if(value instanceof Integer){
+                    jsonObject.addProperty(key, Integer.parseInt(value+""));
+                }else if(value instanceof Timestamp){
+                    Timestamp timestamp = (Timestamp) value;
                     jsonObject.addProperty(key,timestamp.getTime());
-                }
-                else{
+                }else{
                     jsonObject.addProperty(key, entry.getValue()+"");
                 }
             }
