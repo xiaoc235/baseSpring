@@ -214,7 +214,7 @@ public class BaseController {
             logger.info(CommConstants.BUSINESS_ERROR + " " + message,ex);
             return failResponse(ex.getErrorCode(),message);
         }catch (Exception e) {
-            final String message = CommConstants.SYSTEM_ERROR;
+            final String message = CommConstants.SYSTEM_ERROR + " , " +e.getMessage();
             logger.error(message, e);
             return errorResponse(message);
         }
