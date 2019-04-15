@@ -39,6 +39,8 @@ public class WebLogAspect {
 
     private static final String APPLICATION_JSON = "application/json";
 
+    private static final int STR_LENGTH_LIMIT = 8000;
+
     /**
      *
      第一个* 表示任意返回值类型
@@ -106,10 +108,11 @@ public class WebLogAspect {
         if(!ObjectUtils.isEmpty(joinPoint.getArgs())) {
             requestStr.append("Body args : ");
             if(request.getContentType() != null && request.getContentType().contains(APPLICATION_JSON)) {
-                requestStr.append(GsonUtils.toJson(joinPoint.getArgs()));
+                String paramsJson = GsonUtils.toJson(joinPoint.getArgs());
+                requestStr.append(paramsJson.length() > STR_LENGTH_LIMIT ? " 参数过长 " : paramsJson);
             }else{
                 for(Object o : joinPoint.getArgs()){
-                    if(!ObjectUtils.isEmpty(o)){
+                    if(!ObjectUtils.isEmpty(o) && o.toString().length() < STR_LENGTH_LIMIT){
                         requestStr.append(o).append("  ");
                     }
                 }
@@ -141,8 +144,8 @@ public class WebLogAspect {
         }
         responseStr.append(WRAN_LINE_SIGN);
         responseStr.append(LINE);
-        if(responseStr.toString().length() > 3000){
-            logger.info("{} ......", responseStr.toString().substring(0,2990));
+        if(responseStr.toString().length() > STR_LENGTH_LIMIT){
+            logger.info("{} ......", responseStr.toString().substring(0,STR_LENGTH_LIMIT - 10));
         }else {
             logger.info(responseStr.toString());
         }
