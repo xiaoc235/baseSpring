@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -91,10 +94,6 @@ public class RedisClient {
 	/**
 	 * 存入 String
 	 */
-	public void set(String key, String value){
-		this.set(key,value,-1);
-	}
-
 	public void set(String key, String value, int seconds){
         if(seconds > 0) {
             getAsyncCommand().setex(this.buildKey(key), seconds, value);
@@ -112,8 +111,17 @@ public class RedisClient {
 	}
 	public <T> void set(String key, T t, int seconds){
 	    try {
-            String json = GsonUtils.toJson(t);
-            this.set(key,json,seconds);
+	        String value = "";
+	        if(t instanceof java.lang.String){
+                value = t.toString();
+            }else if(t instanceof java.lang.Number){
+	            value = t.toString();
+            }else if(t instanceof java.lang.Boolean){
+	            value = t.toString();
+            }else{
+                value = GsonUtils.toJson(t);
+            }
+            this.set(key,value,seconds);
         }catch (Exception e){
 	        //不能json转换，直接强转为string
             this.set(key, t + "", seconds);
@@ -138,6 +146,37 @@ public class RedisClient {
             return this.get(key);
         }
         return function.get();
+    }
+
+    /**
+     * 获取int类型值,默认为0
+     * @param key
+     * @return
+     */
+    public int getInt(String key){
+	    key = buildKey(key);
+	    if(!exists(key)){
+	        return 0;
+        }
+	    return Integer.parseInt(this.get(key));
+    }
+
+    /**
+     * 整数递增，默认值为0，第一次获取为1
+     * @param key
+     * @return
+     */
+    public long getIncr(String key){
+        return getCommand().incr(buildKey(key));
+    }
+
+    /**
+     * 整数递减，默认值为0，第一次获取为-1
+     * @param key
+     * @return
+     */
+    public long getDecr(String key){
+        return getCommand().decr(buildKey(key));
     }
 
     /**
@@ -236,9 +275,64 @@ public class RedisClient {
             delKey(key);
         }
     }
-	
-	
-	/**
+
+    /**
+     * 取出队列
+     * @param key
+     */
+    public <T> T popQueue(String key, TypeToken<T> typeToken){
+        String value = popQueue(key);
+        return GsonUtils.conver(value, typeToken);
+    }
+    public String popQueue(String key){
+        return getCommand().rpop(buildKey(key));
+    }
+
+    /**
+     * 获取队列所有数据， 索引从0开始
+     * @param key
+     * @param l 最左边索引
+     * @param r 最右边索引
+     * @return
+     */
+    public List<String> getQueueList(String key, int l, int r){
+        List<String> list = getCommand().lrange(buildKey(key),l, r);
+        Collections.reverse(list);
+        return list;
+    }
+
+    public List<String> getQueueList(String key){
+        return getQueueList(key,0,-1);
+    }
+
+    public <T> List<T> getQueueList(String key, TypeToken<T> typeToken){
+        List<String> list = getQueueList(key);
+        List<T> resultList = new LinkedList<>();
+        list.forEach(jsonStr ->
+            resultList.add(GsonUtils.conver(jsonStr, typeToken))
+        );
+        return resultList;
+    }
+
+    /**
+     * 获取队列长度
+     * @param key
+     * @return
+     */
+    public long getQueueLength(String key){
+        return getCommand().llen(buildKey(key));
+    }
+
+
+    /**
+     * 添加到队列
+     */
+    public <T> void addQueue(String key, T t){
+        String value = t instanceof java.lang.String ? t.toString() : GsonUtils.toJson(t);
+        getAsyncCommand().lpush(buildKey(key),value);
+    }
+
+    /**
 	 * 清空DB
 	 */
 	 public void flushDB(){

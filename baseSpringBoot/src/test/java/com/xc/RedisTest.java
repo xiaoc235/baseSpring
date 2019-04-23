@@ -169,4 +169,58 @@ public class RedisTest {
         }
     }
 
+
+    @Test
+    public void testQueue(){
+        redis.setRedisProperties(redisProperties);
+        String cacheKey = "test_queue";
+        redis.addQueue(cacheKey,"a");
+        redis.addQueue(cacheKey,"b");
+        redis.addQueue(cacheKey,"c");
+        redis.addQueue(cacheKey,"1");
+        redis.addQueue(cacheKey,"3");
+        redis.addQueue(cacheKey,"2");
+        log.info("当前队列长度:{}", redis.getQueueLength(cacheKey));
+        log.info("当前队列数据:{}", redis.getQueueList(cacheKey));
+        log.info("取出前三个");
+        for(int i=0; i<3; i++){
+            redis.popQueue(cacheKey);
+        }
+        log.info("当前队列长度:{}", redis.getQueueLength(cacheKey));
+        log.info("当前队列数据:{}", redis.getQueueList(cacheKey));
+    }
+
+    @Test
+    public void testQueueObj(){
+        redis.setRedisProperties(redisProperties);
+        String cacheKey = "test_queue_obj";
+        for(int i=1; i<=6; i++) {
+            redis.addQueue(cacheKey, new TestUser("name" + i, i));
+        }
+
+        log.info("当前队列长度:{}", redis.getQueueLength(cacheKey));
+        log.info("当前队列数据:{}", redis.getQueueList(cacheKey));
+        log.info("取出前三个");
+        for(int i=0; i<3; i++){
+            redis.popQueue(cacheKey);
+        }
+        log.info("当前队列长度:{}", redis.getQueueLength(cacheKey));
+        log.info("当前队列数据:{}", redis.getQueueList(cacheKey));
+    }
+
+    @Test
+    public void testNumber(){
+        redis.setRedisProperties(redisProperties);
+        String cacheKey = "test_int";
+
+        redis.set(cacheKey, 54,600);
+
+        long number = redis.getIncr(cacheKey);
+        log.info("数值:{}", number);
+        number = redis.getIncr(cacheKey);
+        log.info("数值:{}", number);
+        number = redis.getDecr(cacheKey);
+        log.info("数值:{}", number);
+    }
+
 }
