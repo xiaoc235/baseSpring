@@ -7,6 +7,7 @@ import com.common.spring.utils.CommonUtils;
 import com.common.utils.DateFormatUtils;
 import com.common.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
+import io.lettuce.core.KeyValue;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
@@ -16,12 +17,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class RedisTest {
 
     private static final Logger log = LoggerFactory.getLogger(RedisTest.class);
 
+    public static final TypeToken<TestUser> TYPE_TOKEN = new TypeToken<TestUser>(){};
 
     public class TestUser implements Serializable {
         private String name;
@@ -45,6 +50,11 @@ public class RedisTest {
 
         public void setAge(Integer age) {
             this.age = age;
+        }
+
+        @Override
+        public String toString() {
+            return GsonUtils.toJson(this);
         }
     }
 
@@ -223,4 +233,47 @@ public class RedisTest {
         log.info("数值:{}", number);
     }
 
+
+    @Test
+    public void testMap(){
+        redis.setRedisProperties(redisProperties);
+        Map<String,String> map = new HashMap<>();
+        String cacheKey = "maptest";
+        for(int i=0; i<9; i++){
+            redis.getCommand().hsetnx(cacheKey, "key" + i, "value" + i);
+        }
+        redis.getCommand().hsetnx(cacheKey, "key2" , "value2222");
+        Map<String,String> resultMap = redis.getCommand().hgetall(cacheKey);
+        for(Map.Entry<String,String> entry : resultMap.entrySet()){
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+    }
+
+    @Test
+    public void testMap1(){
+        redis.setRedisProperties(redisProperties);
+        String cacheKey = "maptest1";
+        for(int i=0; i<=9; i++){
+           redis.addMap(cacheKey, "key" + i, "value" + i);
+        }
+        String value = redis.getMapValue(cacheKey, "key6");
+        System.out.println("单独key:" + value);
+        Map<String,String> resultMap = redis.getMap(cacheKey);
+        System.out.println(resultMap);
+    }
+
+    @Test
+    public void testMap2(){
+        redis.setRedisProperties(redisProperties);
+        Map<String,TestUser> map = new HashMap<>();
+        String cacheKey = "maptest2";
+        for(int i=0; i<=9; i++){
+            map.put("key" + i, new TestUser("key"+i, i));
+        }
+        redis.addMap(cacheKey, map);
+        TestUser value = redis.getMapValue(cacheKey, "key6", TYPE_TOKEN);
+        System.out.println("单独key:" + value);
+        Map<String,String> resultMap = redis.getMap(cacheKey);
+        System.out.println(resultMap);
+    }
 }

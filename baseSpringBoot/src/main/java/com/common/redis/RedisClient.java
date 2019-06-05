@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -44,7 +41,6 @@ public class RedisClient {
 		String passwd = myRedisProperties.getPassword();
 		String host = myRedisProperties.getHost();
 		int port = myRedisProperties.getPort();
-		String applicationName = myRedisProperties.getApplicationName();
         if(ObjectUtils.isEmpty(lettuceRedis)){
             RedisURI uri = new RedisURI();
             uri.setHost(host);
@@ -94,6 +90,11 @@ public class RedisClient {
 	/**
 	 * 存入 String
 	 */
+
+    public void set(String key, String value){
+        this.set(key,value,-1);
+    }
+
 	public void set(String key, String value, int seconds){
         if(seconds > 0) {
             getAsyncCommand().setex(this.buildKey(key), seconds, value);
@@ -276,6 +277,8 @@ public class RedisClient {
         }
     }
 
+
+    // =============================   队列操作 ============================================
     /**
      * 取出队列
      * @param key
@@ -332,6 +335,68 @@ public class RedisClient {
         getAsyncCommand().lpush(buildKey(key),value);
     }
 
+
+    //================  map操作 =================
+
+    /**
+     * 获取map
+     * @param key
+     * @return
+     */
+    public Map<String, String> getMap(String key){
+        return getCommand().hgetall(buildKey(key));
+    }
+
+    public String getMapValue(String key, String mapKey){
+        return getCommand().hget(buildKey(key),mapKey);
+    }
+
+    public <T> Map<String, T> getMap(String key, TypeToken<T> typeToken){
+        Map<String,String> result = this.getMap(key);
+        Map<String, T> map = new HashMap<>();
+        for(Map.Entry<String,String> entry : result.entrySet()){
+            map.put(entry.getKey(), GsonUtils.conver(entry.getValue(), typeToken));
+        }
+        return map;
+    }
+
+    public <T> T getMapValue(String key, String mapKey,  TypeToken<T> typeToken){
+        String result = this.getMapValue(key, mapKey);
+        return GsonUtils.conver(result, typeToken);
+    }
+
+
+    /**
+     * 添加值进map ， mapKey存在则更新
+     * @param key
+     * @param mapKey
+     * @param mapValue
+     */
+    public <T> void addMap(String key, String mapKey, T mapValue){
+        getAsyncCommand().hset(buildKey(key), mapKey, buildValue(mapValue));
+    }
+
+    /**
+     * 添加map
+     * @param key
+     */
+    public <T> void addMap(String key, Map<String,T> map){
+        for(Map.Entry<String,T> entry : map.entrySet()){
+            getAsyncCommand().hset(buildKey(key), entry.getKey(), buildValue(entry.getValue()));
+        }
+    }
+
+    /**
+     * 添加值进map ， 仅mapKey不存在时执行操作
+     * @param key
+     * @param mapKey
+     * @param mapValue
+     */
+    public <T> void addMapNx(String key, String mapKey, T mapValue){
+        getAsyncCommand().hsetnx(key, mapKey, buildValue(mapValue));
+    }
+
+
     /**
 	 * 清空DB
 	 */
@@ -348,6 +413,10 @@ public class RedisClient {
 
 	 private String buildKey(String key){
 	     return myRedisProperties.getApplicationName() + "_"  + key;
+     }
+
+     private <T> String buildValue(T value){
+         return value instanceof String ? value.toString() : GsonUtils.toJson(value);
      }
 
 	
