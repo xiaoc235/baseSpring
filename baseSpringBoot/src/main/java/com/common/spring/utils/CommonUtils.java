@@ -10,6 +10,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -37,7 +38,7 @@ public class CommonUtils extends com.common.utils.CommonUtils {
         BufferedOutputStream stream = null;
         File filet = null;
         try {
-            FileTxtUtils.mkdir(filePath);
+            mkdir(filePath);
             byte[] bytes = file.getBytes();
             filet = new File(filePath + fileName);
             stream = new BufferedOutputStream(new FileOutputStream(filet));
@@ -119,6 +120,16 @@ public class CommonUtils extends com.common.utils.CommonUtils {
             }
         }
         return ip;
+    }
+
+
+    public static void mkdir(String filePath) throws BusinessException {
+        File file = Paths.get(filePath).toFile();
+        if(!file.exists()){
+            if(!file.mkdir()){
+                throw new BusinessException("创建文件夹失败:{}" + file.getAbsolutePath());
+            }
+        }
     }
 
 }

@@ -2,7 +2,7 @@ package com.common.spring;
 
 import com.common.base.CommConstants;
 import com.common.base.exception.BusinessException;
-import com.common.redis.RedisClient;
+import com.common.redis.client.RedisClient;
 import com.common.spring.utils.CommonUtils;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.http.HttpStatus;

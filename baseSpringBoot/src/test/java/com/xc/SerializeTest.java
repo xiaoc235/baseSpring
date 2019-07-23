@@ -1,6 +1,6 @@
 package com.xc;
 
-import com.common.redis.RedisClient;
+import com.common.redis.client.RedisClient;
 import com.common.redis.MyRedisProperties;
 import com.common.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;

@@ -4,7 +4,7 @@ package com.common.spring;
 import com.common.base.CommConstants;
 import com.common.base.exception.BusinessException;
 import com.common.base.response.BaseResponseDto;
-import com.common.redis.RedisClient;
+import com.common.redis.client.RedisClient;
 import com.common.spring.utils.CheckUtils;
 import com.common.spring.utils.CommonUtils;
 import org.slf4j.Logger;
@@ -134,7 +134,7 @@ public class BaseController {
         }
         HttpStatus httpStatus = HttpStatus.resolve(code);
         if(null == httpStatus){
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            httpStatus = HttpStatus.OK;
         }
         return new ResponseEntity<>(new BaseResponseDto<>(false,code,message,obj),httpStatus);
     }

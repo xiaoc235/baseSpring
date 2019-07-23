@@ -109,7 +109,8 @@ public class WebLogAspect {
             requestStr.append("Body args : ");
             if(request.getContentType() != null && request.getContentType().contains(APPLICATION_JSON)) {
                 String paramsJson = GsonUtils.toJson(joinPoint.getArgs());
-                requestStr.append(paramsJson.length() > STR_LENGTH_LIMIT ? " 参数过长 " : paramsJson);
+                int length = paramsJson.length();
+                requestStr.append( length> STR_LENGTH_LIMIT ? " 参数过长, length: " + length : paramsJson);
             }else{
                 for(Object o : joinPoint.getArgs()){
                     if(!ObjectUtils.isEmpty(o) && o.toString().length() < STR_LENGTH_LIMIT){

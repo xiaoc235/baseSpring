@@ -1,8 +1,11 @@
 package com.common.redis;
 
+import com.common.redis.client.RedisClient;
+import com.common.redis.client.RedisClusterClient;
 import com.common.spring.ToolSpring;
 import com.google.gson.reflect.TypeToken;
 import io.lettuce.core.api.sync.RedisCommands;
+import io.lettuce.core.cluster.api.sync.RedisAdvancedClusterCommands;
 
 import java.util.List;
 
@@ -17,6 +20,10 @@ public class RedisManager {
         return (RedisClient) ToolSpring.getBean("RedisClient");
     }
 
+    private RedisClusterClient getRedisClusterClient() {
+        return (RedisClusterClient) ToolSpring.getBean("RedisClusterClient");
+    }
+
     private static RedisManager instance = null;
 
     static {
@@ -28,14 +35,13 @@ public class RedisManager {
         return instance;
     }
 
+
     public static RedisClient getRedis(){
         return getInstance().getRedisClient();
     }
-    public static RedisCommands<String,String> getCommand(){
-        return getRedis().getCommand();
+    public static RedisClusterClient getClusterRedis(){
+        return getInstance().getRedisClusterClient();
     }
-
-
 
 
 

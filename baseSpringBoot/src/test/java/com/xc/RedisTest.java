@@ -1,13 +1,12 @@
 package com.xc;
 
 import com.common.redis.BaseCacheEntity;
-import com.common.redis.RedisClient;
 import com.common.redis.MyRedisProperties;
+import com.common.redis.client.RedisClient;
 import com.common.spring.utils.CommonUtils;
 import com.common.utils.DateFormatUtils;
 import com.common.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
-import io.lettuce.core.KeyValue;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
@@ -18,7 +17,6 @@ import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
