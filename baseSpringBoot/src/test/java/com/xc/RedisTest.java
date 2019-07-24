@@ -26,7 +26,7 @@ public class RedisTest {
 
     public static final TypeToken<TestUser> TYPE_TOKEN = new TypeToken<TestUser>(){};
 
-    public class TestUser implements Serializable {
+    public static class TestUser implements Serializable {
         private String name;
         private Integer age;
 

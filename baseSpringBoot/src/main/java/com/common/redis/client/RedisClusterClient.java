@@ -40,8 +40,6 @@ public class RedisClusterClient extends BaseRedisClientImpl implements BaseRedis
     private static GenericObjectPool<StatefulRedisClusterConnection<String, String>> pool;
     private static StatefulRedisClusterConnection<String, String> connection;
 	private static synchronized void initRedis(){
-
-
         RedisProperties.Cluster clusterProperties = getMyRedisProperties().getCluster();
         String passwd = getMyRedisProperties().getPassword();
         List<String> list = clusterProperties.getNodes();
@@ -58,12 +56,12 @@ public class RedisClusterClient extends BaseRedisClientImpl implements BaseRedis
         if(ObjectUtils.isEmpty(pool)){
             initRedis();
         }
-        if(ObjectUtils.isEmpty(connection)){
-            try {
+        try {
+            if(connection == null){
                 connection = pool.borrowObject();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return connection;
 	}

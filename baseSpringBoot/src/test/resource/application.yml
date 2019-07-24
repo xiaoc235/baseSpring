@@ -4,9 +4,9 @@ spring:
     port: 6379
     lettuce:
       pool:
-        max-active: 10
-        maxIdle: 10
-        minIdle: 5
+        max-active: 1000
+        maxIdle: 100
+        minIdle: 10
     cluster:
       nodes:
         - 127.0.0.1:7001
