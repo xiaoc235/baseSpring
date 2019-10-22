@@ -27,7 +27,7 @@
 
         <baseCommon.version>2.0.3.RELEASE</baseCommon.version>
         <baseJPA.version>2.0.3.RELEASE</baseJPA.version>
-        <baseSpringBoot.version>2.0.3.RELEASE</baseSpringBoot.version>
+        <baseSpringBoot.version>2.0.4.RELEASE</baseSpringBoot.version>
 
         <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
         <springBoot.version>2.0.3.RELEASE</springBoot.version>

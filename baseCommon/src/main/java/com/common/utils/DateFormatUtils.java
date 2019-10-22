@@ -79,7 +79,7 @@ public class DateFormatUtils {
      * @return
      */
     public static int getBetweenTwoDays(LocalDateTime start, LocalDateTime end) {
-        return start.compareTo(end);
+        return (int) java.time.Duration.between(start,end).toDays();
     }
 
     public static int getBetweenTwoDays(String start, String end) {
@@ -88,6 +88,6 @@ public class DateFormatUtils {
 
 
     public static void main(String[] args) {
-        System.out.println(getBetweenTwoDays(str2date("2018-09-10"), str2date("2018-09-10")));
+        System.out.println(getBetweenTwoDays("2019-04-30 00:00:00", "2019-05-03 00:00:00"));
     }
 }

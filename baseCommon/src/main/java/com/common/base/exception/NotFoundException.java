@@ -7,14 +7,14 @@ import com.common.base.CommConstants;
  * @author jianghaoming
  * @date 2019-03-07 11:38:29
  */
-public class NotFundException extends BusinessException {
+public class NotFoundException extends BusinessException {
 
     private static final int ERROR_CODE = 404;
-    public NotFundException(){
+    public NotFoundException(){
         super(ERROR_CODE, CommConstants.NOT_FUND);
     }
 
-    public NotFundException(String msg){
+    public NotFoundException(String msg){
         super(ERROR_CODE, CommConstants.NOT_FUND + " " +msg);
     }
 }

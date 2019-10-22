@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseController.class);
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 
     private static final int FAIL_CODE = 1;
@@ -211,11 +211,11 @@ public class BaseController {
             return method.call();
         }catch (BusinessException ex) {
             final String message = ex.getErrorDesc();
-            logger.info(CommConstants.BUSINESS_ERROR + " " + message,ex);
+            log.info(CommConstants.BUSINESS_ERROR + " " + message,ex);
             return failResponse(ex.getErrorCode(),message);
         }catch (Exception e) {
             final String message = CommConstants.SYSTEM_ERROR + " , " +e.getMessage();
-            logger.error(message, e);
+            log.error(message, e);
             return errorResponse(message);
         }
     }

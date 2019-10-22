@@ -1,7 +1,9 @@
 package com.common.services;
 
 import com.common.base.exception.BusinessException;
-import com.common.base.exception.NotFundException;
+import com.common.base.exception.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -19,8 +21,12 @@ import java.util.List;
 @NoRepositoryBean
 public class BaseServiceImpl<T,ID>  implements BaseService<T,ID> {
 
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private JpaRepository<T, ID> jpaRepository;
+
+
 
     @Override
     public T save(T dto) {
@@ -36,7 +42,7 @@ public class BaseServiceImpl<T,ID>  implements BaseService<T,ID> {
     public T getByIdAndCheck(ID id) throws BusinessException {
         T result = this.getById(id);
         if(result == null){
-            throw new NotFundException("id :" + id);
+            throw new NotFoundException("id :" + id);
         }
         return result;
     }

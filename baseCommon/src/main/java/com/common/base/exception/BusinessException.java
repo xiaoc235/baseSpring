@@ -7,7 +7,7 @@ package com.common.base.exception;
 public class BusinessException extends Exception {
 
 
-    private int errorCode = 1;
+    private int errorCode = 200;
 
     private String errorDesc ="";
 
