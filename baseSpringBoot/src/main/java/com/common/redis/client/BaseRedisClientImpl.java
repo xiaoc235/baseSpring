@@ -11,6 +11,7 @@ package com.common.redis.client;
 
 
 import com.common.redis.MyRedisProperties;
+import com.common.spring.utils.CommonUtils;
 import com.common.utils.GsonUtils;
 import io.lettuce.core.RedisURI;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -39,10 +40,12 @@ public class BaseRedisClientImpl {
 	protected static GenericObjectPoolConfig getPoolConfig(){
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
         RedisProperties.Pool poolProperties = myRedisProperties.getLettuce().getPool();
-        poolConfig.setMaxIdle(poolProperties.getMaxIdle());
-        poolConfig.setMaxTotal(poolProperties.getMaxActive());
-        poolConfig.setMinIdle(poolProperties.getMinIdle());
-        poolConfig.setMaxWaitMillis(poolProperties.getMaxWait().toMillis());
+        if(!CommonUtils.isBlank(poolProperties)) {
+            poolConfig.setMaxIdle(poolProperties.getMaxIdle());
+            poolConfig.setMaxTotal(poolProperties.getMaxActive());
+            poolConfig.setMinIdle(poolProperties.getMinIdle());
+            poolConfig.setMaxWaitMillis(poolProperties.getMaxWait().toMillis());
+        }
         return poolConfig;
     }
 
