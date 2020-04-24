@@ -3,20 +3,25 @@ package com.common.base.response;
 import com.common.base.BaseEntity;
 
 
+/**
+ * @param <T>
+ */
 public class BaseResponseDto<T> extends BaseEntity {
 
-    private Boolean success = false;
-    private int code;
-    private String message;
-    private T data;
+    private Boolean isSuccess = false;
+    private int sysCode;
+    private int businessCode;
+    private String sysMessage;
+    private T returnObj;
 
     public BaseResponseDto( Boolean success , int code, String message, T data) {
         super();
-        this.success = success;
-        this.code = code;
-        this.message = message;
+        this.isSuccess = success;
+        this.sysCode = code;
+        this.businessCode = code;
+        this.sysMessage = message;
         if(data != null) {
-            this.data = data;
+            this.returnObj = data;
         }
     }
 
@@ -25,35 +30,43 @@ public class BaseResponseDto<T> extends BaseEntity {
     }
 
 
-    public Boolean getSuccess() {
-        return success;
+    public Boolean getIsSuccess() {
+        return isSuccess;
     }
 
-    public void setSuccess(Boolean success) {
-        this.success = success;
+    public void setIsSuccess(Boolean success) {
+        isSuccess = success;
     }
 
-    public String getMessage() {
-        return message;
+    public int getSysCode() {
+        return sysCode;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setSysCode(int sysCode) {
+        this.sysCode = sysCode;
     }
 
-    public T getData() {
-        return data;
+    public int getBusinessCode() {
+        return businessCode;
     }
 
-    public void setData(T data) {
-        this.data = data;
+    public void setBusinessCode(int businessCode) {
+        this.businessCode = businessCode;
     }
 
-    public int getCode() {
-        return code;
+    public String getSysMessage() {
+        return sysMessage;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setSysMessage(String sysMessage) {
+        this.sysMessage = sysMessage;
+    }
+
+    public T getReturnObj() {
+        return returnObj;
+    }
+
+    public void setReturnObj(T returnObj) {
+        this.returnObj = returnObj;
     }
 }
